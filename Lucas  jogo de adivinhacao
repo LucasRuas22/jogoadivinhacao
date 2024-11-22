@@ -1,0 +1,53 @@
+import random
+
+def main():
+
+    print("Bem-vindo Jogo de Adivinhação!")
+
+    print("Escolha um número entre 0 a 100 e boa sorte!")
+
+    print("Voce terá 10 tentativas para acertar!")
+
+
+numeroAleatorio=random.randint(0,100)
+
+tentativa_restantes=10
+
+while tentativa_restantes>0:
+
+    print("Tentativas restantes:",tentativa_restantes)
+
+    tentativa=int(input("Digite um número:"))
+
+
+    try:
+        numeroAleatorio= int(input(f"voce tem {tentativa_restantes} tentativas, qual seu palpite?"))
+
+    except:
+        print("Digite um número valido!")
+
+    tentativa_restantes=1
+
+    if numeroAleatorio < numeroAleatorio:
+        print("Seu palpite foi menor do que o numero aleatorio!")
+        print("tente novamente")
+
+        print(f"tentativas: {tentativa_restantes}/{tentativa_restantes}")
+
+    elif numeroAleatorio > numeroAleatorio:
+        print("Seu palpite foi maior do que o numero aleatorio!")
+        print("tente novamente")
+
+        print(f"tentativas: {tentativa_restantes}/{tentativa_restantes}")
+
+
+    else:
+        print(f"Parabens, vocé acertou o numero {numeroAleatorio}!")
+
+    
+
+
+
+
+if __name__=="__main__":
+    main()
