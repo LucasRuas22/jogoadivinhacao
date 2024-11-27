@@ -1,0 +1,134 @@
+import sqlite3
+
+
+
+def conectar_db():
+    conn = sqlite3.connect('estoque.db')
+    cursor = conn.cursor()
+    return conn, cursor
+
+
+
+
+def criar_tabela():
+    conn, cursor = conectar_db()
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS produtos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        quantidade INTEGER NOT NULL,
+        preco REAL NOT NULL
+    );
+    ''')
+    conn.commit()
+    conn.close()
+
+
+
+
+def adicionar_produto(nome, quantidade, preco):
+    conn, cursor = conectar_db()
+    cursor.execute('''
+    INSERT INTO produtos (nome, quantidade, preco) VALUES (?, ?, ?)
+    ''', (nome, quantidade, preco))
+    conn.commit()
+    conn.close()
+    print(f"Produto '{nome}' adicionado com sucesso!")
+
+
+
+
+
+def atualizar_produto(id_produto, quantidade=None, preco=None):
+    conn, cursor = conectar_db()
+    if quantidade is not None:
+        cursor.execute('''
+        UPDATE produtos SET quantidade = ? WHERE id = ?
+        ''', (quantidade, id_produto))
+    if preco is not None:
+        cursor.execute('''
+        UPDATE produtos SET preco = ? WHERE id = ?
+        ''', (preco, id_produto))
+    conn.commit()
+    conn.close()
+    print(f"Produto com ID {id_produto} atualizado com sucesso!")
+
+
+
+
+
+def remover_produto(id_produto):
+    conn, cursor = conectar_db()
+    cursor.execute('''
+    DELETE FROM produtos WHERE id = ?
+    ''', (id_produto,))
+    conn.commit()
+    conn.close()
+    print(f"Produto com ID {id_produto} removido com sucesso!")
+
+
+
+
+def consultar_produtos():
+    conn, cursor = conectar_db()
+    cursor.execute('SELECT * FROM produtos')
+    produtos = cursor.fetchall()
+    conn.close()
+    
+    if produtos:
+        print("\nProdutos no estoque:")
+        for produto in produtos:
+            print(f"ID: {produto[0]} | Nome: {produto[1]} | Quantidade: {produto[2]} | Preço: R$ {produto[3]:.2f}")
+    else:
+        print("Nenhum produto encontrado.")
+
+def menu():
+    criar_tabela()  
+    
+    while True:
+        print("\n===== Controle de Estoque =====")
+        print("1. Adicionar produto")
+        print("2. Atualizar produto")
+        print("3. Remover produto")
+        print("4. Consultar produtos")
+        print("5. Sair")
+        
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == '1':
+            nome = input("Nome do produto: ")
+            quantidade = int(input("Quantidade em estoque: "))
+            preco = float(input("Preço unitário: R$ "))
+            adicionar_produto(nome, quantidade, preco)
+        
+        elif escolha == '2':
+            id_produto = int(input("Digite o ID do produto que deseja atualizar: "))
+            print("O que você deseja atualizar?")
+            print("1. Quantidade")
+            print("2. Preço")
+            opcao = input("Escolha uma opção: ")
+            if opcao == '1':
+                nova_quantidade = int(input("Nova quantidade: "))
+                atualizar_produto(id_produto, quantidade=nova_quantidade)
+            elif opcao == '2':
+                novo_preco = float(input("Novo preço: R$ "))
+                atualizar_produto(id_produto, preco=novo_preco)
+        
+        elif escolha == '3':
+            id_produto = int(input("Digite o ID ou NOME do produto que deseja remover: "))
+            remover_produto(id_produto)
+        
+        elif escolha == '4':
+            consultar_produtos()
+        
+        elif escolha == '5':
+            print("Sair...")
+            break
+        
+        else:
+            print("Erro.")
+
+
+
+if __name__ == '__main__':
+    menu()
